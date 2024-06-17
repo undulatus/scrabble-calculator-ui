@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { fetchLetterPoints } from '../services/api';
+import { TableBody, TableCell, TableRow } from '@mui/material';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import Table from '@mui/material/Table';
+import Paper from '@mui/material/Paper';
 
 function LetterPointsAppendix() {
   const [data, setData] = useState([]);
@@ -30,13 +35,24 @@ function LetterPointsAppendix() {
     }
 
     return (
-        <div>
-            {data.letterPoints.map((item, index) => (
-            <div key={index} style={{ marginBottom: '20px' }}>
-                <p>{item.letters.join(', ')} = {item.points}</p>
-            </div>
-            ))}
-        </div>
+        <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 250 }} aria-label="simple table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell align="left">Letters</TableCell>
+                        <TableCell align="left">Points</TableCell>
+                        </TableRow>
+                </TableHead>
+                <TableBody>
+                        {data.letterPoints.map((item, index) => (
+                            <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                <TableCell align="left">{item.letters.join(', ')}</TableCell>
+                                <TableCell align="left">{item.points}</TableCell>
+                            </TableRow>
+                        ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }
 
