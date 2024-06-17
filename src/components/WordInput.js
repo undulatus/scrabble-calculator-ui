@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Box, TextField, Button, Snackbar, Alert, Table, TableBody, TableCell, TableHead, TableRow, Paper } from '@mui/material';
-import { saveScore, viewTopScores } from '../services/api';
+import { saveScore, viewTopScores, calculateScore } from '../services/api';
 
 function WordInput() {
   const [characters, setCharacters] = useState(['', '', '', '', '', '', '', '', '', '']);
@@ -11,14 +11,23 @@ function WordInput() {
 
   const [savedScores, setSavedScores] = useState([]);
   const [showScores, setShowScores] = useState(false);
+  const [curScore, setCurScore] = useState(0);
 
-  const handleWordInput = (index, value) => {
+  const handleWordInput = async (index, value) => {
+    console.log(index);
     const uppercaseValue = value.toUpperCase().replace(/[^A-Z]/g, '');
     const newCharacters = [...characters];
     newCharacters[index] = uppercaseValue;
     setCharacters(newCharacters);
-    console.log(characters);
-
+    if(index === 1) {
+        setCurScore(await calculateScore(uppercaseValue));
+        console.log(uppercaseValue, " >> THIS setCurScore");
+    } else {
+        const word = characters.join('') + uppercaseValue;
+        console.log(word, " >> THIS word setCurScore");
+        setCurScore(await calculateScore(word));
+    }
+    console.log("the score : ", curScore);
     if (uppercaseValue && index < inputRefs.current.length - 1) {
         inputRefs.current[index + 1].current.focus();
     }
@@ -68,6 +77,9 @@ function WordInput() {
             inputRef={inputRefs.current[index]}
           />
         ))}
+      </Box>
+      <Box>
+        Score: {curScore}
       </Box>
       <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
         <Button variant="contained" onClick={() => handleButtonAction('reset')}>Reset Tiles</Button>

@@ -29,6 +29,20 @@ export const viewTopScores = async () => {
   }
 }
 
+export const calculateScore = async (input) => {
+  try {
+    const response = await api.get('/scores/calculate', {
+      params: {
+        word: input
+      }
+    });
+    return response.data;
+  } catch(error) {
+    console.error('Error ', error.errorMessage)
+    throw error;
+  }
+}
+
 export const saveScore = async (input) => {
   try {
     const response = await api.post(
