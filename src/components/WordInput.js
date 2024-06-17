@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Box, TextField, Button, Snackbar, Alert } from '@mui/material';
+import { Box, TextField, Button, Snackbar, Alert, Table, TableBody, TableCell, TableHead, TableRow, Paper } from '@mui/material';
 import { saveScore, viewTopScores } from '../services/api';
 
 function WordInput() {
@@ -8,6 +8,9 @@ function WordInput() {
     React.createRef(), React.createRef(), React.createRef(), React.createRef(), React.createRef(),
   ]);
   const [displaySavedNotif, isDisplaySavedNotif] = useState(false);
+
+  const [savedScores, setSavedScores] = useState([]);
+  const [showScores, setShowScores] = useState(false);
 
   const handleWordInput = (index, value) => {
     const uppercaseValue = value.toUpperCase().replace(/[^A-Z]/g, '');
@@ -27,19 +30,23 @@ function WordInput() {
     }
   };
 
-  const handleButtonAction = (action) => {
+  const handleButtonAction = async (action) => {
     console.log(`Action ${action} called`);
     if(action === 'reset') {
         setCharacters(['', '', '', '', '', '', '', '', '', '']);
     } else if(action === 'save') {
         const word = characters.join('');
-        //alert('save ' + word);
-        //saveScore(word);
+        saveScore(word);
         isDisplaySavedNotif(true);
     } else if(action === 'view') {
-        const response = viewTopScores();
-        console.log(response.data);
-        alert('view');
+        const scores = await viewTopScores();
+        console.log("trying to view top " + scores);
+        setSavedScores(scores)
+        if(showScores === false) {
+            setShowScores(true);
+        } else {
+            setShowScores(false);
+        }
     }
   };
 
@@ -88,6 +95,30 @@ function WordInput() {
             </Alert>
         </Snackbar>
       </Box>
+      {showScores && (
+        <Box sx={{ mt: 4, width: '100%', maxWidth: '600px' }}>
+          <Paper>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Score</TableCell>
+                  <TableCell align="center">Word</TableCell>
+                  <TableCell align="center">Saved Date</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {savedScores.map((score, index) => (
+                  <TableRow key={index}>
+                    <TableCell align="center">{score.score}</TableCell>
+                    <TableCell align="center">{score.word}</TableCell>
+                    <TableCell align="center">{score.createdDate}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Paper>
+        </Box>
+      )}
     </Box>
   );
 }

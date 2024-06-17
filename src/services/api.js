@@ -21,6 +21,7 @@ export const fetchLetterPoints = async () => {
 export const viewTopScores = async () => {
   try {
     const response = await api.get('/scores/top10');
+    console.log("i need response here ", response)
     return response.data;
   } catch(error) {
     console.error('Error ', error.errorMessage)
