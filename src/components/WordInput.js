@@ -45,8 +45,11 @@ function WordInput() {
         setCharacters(['', '', '', '', '', '', '', '', '', '']);
     } else if(action === 'save') {
         const word = characters.join('');
-        saveScore(word);
+        await saveScore(word);
         isDisplaySavedNotif(true);
+        //added the below to refresh saved scores
+        const scores = await viewTopScores();
+        setSavedScores(scores)
     } else if(action === 'view') {
         const scores = await viewTopScores();
         console.log("trying to view top " + scores);
