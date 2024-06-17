@@ -31,7 +31,7 @@ function LetterPointsAppendix() {
 
     return (
         <div>
-            {data.map((item, index) => (
+            {data.letterPoints.map((item, index) => (
             <div key={index} style={{ marginBottom: '20px' }}>
                 <p>{item.letters.join(', ')} = {item.points}</p>
             </div>
@@ -40,4 +40,4 @@ function LetterPointsAppendix() {
     );
 }
 
-export default LetterPointsAppendix()
+export default LetterPointsAppendix;

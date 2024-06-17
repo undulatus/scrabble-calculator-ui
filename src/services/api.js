@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.SCRABBLE_UI_API_URL
+  //baseURL: process.env.SCRABBLE_UI_API_URL
+  baseURL: 'http://localhost:8080/scrabble'
 })
 
 export const fetchLetterPoints = async () => {
