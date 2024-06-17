@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Box, TextField, Button } from '@mui/material';
+import { Box, TextField, Button, Snackbar, Alert } from '@mui/material';
 import { saveScore, viewTopScores } from '../services/api';
 
 function WordInput() {
@@ -7,6 +7,7 @@ function WordInput() {
   const inputRefs = useRef([React.createRef(), React.createRef(), React.createRef(), React.createRef(), React.createRef(),
     React.createRef(), React.createRef(), React.createRef(), React.createRef(), React.createRef(),
   ]);
+  const [displaySavedNotif, isDisplaySavedNotif] = useState(false);
 
   const handleWordInput = (index, value) => {
     const uppercaseValue = value.toUpperCase().replace(/[^A-Z]/g, '');
@@ -32,11 +33,18 @@ function WordInput() {
         setCharacters(['', '', '', '', '', '', '', '', '', '']);
     } else if(action === 'save') {
         const word = characters.join('');
-        alert('save ' + word);
-        saveScore(word);
+        //alert('save ' + word);
+        //saveScore(word);
+        isDisplaySavedNotif(true);
     } else if(action === 'view') {
-        prompt('view');
+        const response = viewTopScores();
+        console.log(response.data);
+        alert('view');
     }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    isDisplaySavedNotif(false);
   };
 
   return (
@@ -58,6 +66,27 @@ function WordInput() {
         <Button variant="contained" onClick={() => handleButtonAction('reset')}>Reset Tiles</Button>
         <Button variant="contained" onClick={() => handleButtonAction('save')}>Save Score</Button>
         <Button variant="contained" onClick={() => handleButtonAction('view')}>View Top Scores</Button>
+        <Snackbar open={displaySavedNotif} autoHideDuration={6000} onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            ContentProps={{
+              sx: {
+                position: 'fixed',
+                left: '50%',
+                bottom: '50%',
+                transform: 'translate(-50%, 50%)',
+                minWidth: '300px'
+              }
+            }}
+        >
+            <Alert
+                onClose={handleSnackbarClose}
+                severity="success"
+                variant="filled"
+                sx={{minWidth: '100%'}}
+            >
+                Successfully Saved Score!
+            </Alert>
+        </Snackbar>
       </Box>
     </Box>
   );
