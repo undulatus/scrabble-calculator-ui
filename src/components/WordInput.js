@@ -3,12 +3,11 @@ import { Box, TextField, Button, Snackbar, Alert, Table, TableBody, TableCell, T
 import { saveScore, viewTopScores, calculateScore } from '../services/api';
 
 function WordInput() {
-  const [characters, setCharacters] = useState(['', '', '', '', '', '', '', '', '', '']);
   const inputRefs = useRef([React.createRef(), React.createRef(), React.createRef(), React.createRef(), React.createRef(),
     React.createRef(), React.createRef(), React.createRef(), React.createRef(), React.createRef(),
   ]);
   const [displaySavedNotif, isDisplaySavedNotif] = useState(false);
-
+  const [characters, setCharacters] = useState(['', '', '', '', '', '', '', '', '', '']);
   const [savedScores, setSavedScores] = useState([]);
   const [showScores, setShowScores] = useState(false);
   const [curScore, setCurScore] = useState(0);
@@ -18,16 +17,10 @@ function WordInput() {
     let uppercaseValue = value.toUpperCase().replace(/[^A-Z]/g, '');
     let newCharacters = [...characters];
     newCharacters[index] = uppercaseValue;
-    setCharacters(newCharacters);
-    if(index === 1) {
-        setCurScore(await calculateScore(uppercaseValue));
-        console.log(uppercaseValue, " >> THIS setCurScore");
-    } else {
-        const word = characters.join('') + uppercaseValue;
-        console.log(word, " >> THIS word setCurScore");
-        setCurScore(await calculateScore(word));
-    }
+    const word = newCharacters.join('');
+    setCurScore(await calculateScore(word));
     console.log("the score : ", curScore);
+    setCharacters(newCharacters);
     if (uppercaseValue && index < inputRefs.current.length - 1) {
         inputRefs.current[index + 1].current.focus();
     }
@@ -36,11 +29,6 @@ function WordInput() {
   const handleKeyDown = async (index, event) => {
     if (event.key === 'Backspace' && characters[index] === '' && index > 0) {
       inputRefs.current[index - 1].current.focus();
-      // characters[index] = ''
-      // const word = characters.join('');
-      // const score = await calculateScore(word);
-      // setCurScore(score);
-      // console.log(score, " << setCurScore | erased letter >> ", word, );
     }
   };
 
@@ -100,7 +88,8 @@ function WordInput() {
       <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
         <Button variant="contained" onClick={() => handleButtonAction('reset')}>Reset Tiles</Button>
         <Button variant="contained" onClick={() => handleButtonAction('save')}>Save Score</Button>
-        <Button variant="contained" onClick={() => handleButtonAction('view')}>View Top Scores</Button>
+        <Button variant="contained" onClick={() => handleButtonAction('view')}>
+          {showScores ? 'Hide Top Scores' : 'View Top Scores'}</Button>
         <Snackbar open={displaySavedNotif} autoHideDuration={6000} onClose={handleSnackbarClose}
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             ContentProps={{
