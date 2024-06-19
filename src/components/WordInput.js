@@ -15,8 +15,8 @@ function WordInput() {
 
   const handleWordInput = async (index, value) => {
     console.log(index);
-    const uppercaseValue = value.toUpperCase().replace(/[^A-Z]/g, '');
-    const newCharacters = [...characters];
+    let uppercaseValue = value.toUpperCase().replace(/[^A-Z]/g, '');
+    let newCharacters = [...characters];
     newCharacters[index] = uppercaseValue;
     setCharacters(newCharacters);
     if(index === 1) {
@@ -33,23 +33,36 @@ function WordInput() {
     }
   };
 
-  const handleKeyDown = (index, event) => {
+  const handleKeyDown = async (index, event) => {
     if (event.key === 'Backspace' && characters[index] === '' && index > 0) {
       inputRefs.current[index - 1].current.focus();
+      // characters[index] = ''
+      // const word = characters.join('');
+      // const score = await calculateScore(word);
+      // setCurScore(score);
+      // console.log(score, " << setCurScore | erased letter >> ", word, );
     }
   };
+
+  const resetTiles = () => {
+    setCharacters(['', '', '', '', '', '', '', '', '', '']);
+        const word = characters.join('');
+        console.log(word, " >> reset letters setCurScore");
+        setCurScore(0);
+  }
 
   const handleButtonAction = async (action) => {
     console.log(`Action ${action} called`);
     if(action === 'reset') {
-        setCharacters(['', '', '', '', '', '', '', '', '', '']);
+        resetTiles();
     } else if(action === 'save') {
         const word = characters.join('');
         await saveScore(word);
         isDisplaySavedNotif(true);
         //added the below to refresh saved scores
         const scores = await viewTopScores();
-        setSavedScores(scores)
+        setSavedScores(scores);
+        resetTiles();
     } else if(action === 'view') {
         const scores = await viewTopScores();
         console.log("trying to view top " + scores);
