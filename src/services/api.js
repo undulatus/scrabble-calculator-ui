@@ -52,7 +52,7 @@ export const saveScore = async (input) => {
     console.log('saved score id : ' + response.data);
     return response.data;
   } catch(error) {
-    console.error('Error', error.errorMessage)
+    console.error('Error from API ', error.response.data.errorMessage)
     throw error;
   }
 }

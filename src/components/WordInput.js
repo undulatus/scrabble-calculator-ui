@@ -13,6 +13,7 @@ function WordInput() {
   const [savedScores, setSavedScores] = useState([]);
   const [showScores, setShowScores] = useState(false);
   const [curScore, setCurScore] = useState(0);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleWordInput = async (index, value) => {
     console.log(index);
@@ -47,7 +48,13 @@ function WordInput() {
         resetTiles();
     } else if(action === 'save') {
         const word = characters.join('');
-        await saveScore(word);
+        try {
+          await saveScore(word);
+        } catch(error) {
+          console.error('Error ', error.response.data.errorMessage)
+          setErrorMessage(error.response.data.errorMessage)
+          console.log("check " + errorMessage)
+        }
         isDisplaySavedNotif(true);
         //added the below to refresh saved scores
         const scores = await viewTopScores();
@@ -67,6 +74,7 @@ function WordInput() {
 
   const handleSnackbarClose = (event, reason) => {
     isDisplaySavedNotif(false);
+    setErrorMessage(null);
   };
 
   // styles
@@ -141,14 +149,25 @@ function WordInput() {
                 }
               }}
           >
+            {errorMessage === null ? 
               <Alert
-                  onClose={handleSnackbarClose}
-                  severity="success"
-                  variant="filled"
-                  sx={{minWidth: '100%'}}
-              >
-                  Successfully Saved Score!
-              </Alert>
+                    onClose={handleSnackbarClose}
+                    severity="success"
+                    variant="filled"
+                    sx={{minWidth: '100%'}}
+                >
+                    Successfully Saved Score!
+                </Alert> 
+                  :
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity="error"
+                    variant="filled"
+                    sx={{minWidth: '100%'}}
+                >
+                    {errorMessage}
+                </Alert>
+            }
           </Snackbar>
         </Box>
         {showScores && (
